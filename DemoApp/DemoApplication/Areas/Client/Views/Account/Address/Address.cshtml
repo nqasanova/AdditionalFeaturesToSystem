@@ -1,0 +1,32 @@
+﻿@using DemoApplication.Services.Abstracts
+
+@model ItemViewModel
+@inject IUserService userservice
+
+@if (userservice.CurrentUser.Address is not null)
+{
+
+    <div class="myaccount-content">
+        <h3>Your current Address</h3>
+        <address>
+            <p><strong>@($"{Model.OrdererFirstName} {Model.OrdererLastName}")</strong></p>
+            <p>
+                @Model.Name
+            </p>
+            <p>@Model.PhoneNumber</p>
+        </address>
+        <a asp-route="client-account-update-address" class="btn btn--primary">
+            <i class="fa fa-edit"></i>
+            Edit Address
+        </a>
+    </div>
+}
+
+else
+{
+    <h3>Please enter your address.</h3>
+    <a asp-route="client-account-add-address" class="btn btn--primary">
+        <i class="fa fa-edit"></i>
+        Add Address
+    </a>
+}

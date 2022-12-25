@@ -1,0 +1,29 @@
+﻿@model UpdateDetailsViewModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<div class="myaccount-content">
+    <h3>Account Details</h3>
+    <div class="account-details-form">
+        <form method="post" asp-route="client-account-details" >
+            <div class="row">
+                <div class="col-lg-6 col-12  mb--30">
+                    <label asp-for="FirstName"></label>
+                    <input asp-for="FirstName" class="form-control">
+                    <span asp-validation-for="FirstName" class="text-danger"></span>
+                </div>
+                <div class="col-lg-6 col-12  mb--30" >
+                    <label asp-for="LastName"></label>
+                    <input asp-for="LastName" class="form-control">
+                    <span asp-validation-for="LastName" class="text-danger"></span>
+                </div>
+                <div class="col-lg-6  mb--30">
+                    <button class="btn btn--primary">Save Changes</button>
+                </div>
+                <div class="col-12 col-lg-6  mb--30">
+                    <a asp-route="client-account-chngpass" class="btn btn--primary">Change Password</a>
+                </div>
+
+            </div>
+        </form>
+    </div>
+</div>
