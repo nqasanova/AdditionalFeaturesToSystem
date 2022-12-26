@@ -28,10 +28,9 @@ namespace DemoApplication.Areas.Client.Controllers
         #region Dashboard
 
         [HttpGet("dashboard", Name = "client-account-dashboard")]
-        public async Task<IActionResult> Dashboard()
+        public IActionResult Dashboard()
         {
             var user = _userService.CurrentUser;
-
             return View();
         }
 
@@ -40,10 +39,9 @@ namespace DemoApplication.Areas.Client.Controllers
         #region Orders
 
         [HttpGet("orders", Name = "client-account-orders")]
-        public async Task<IActionResult> Orders()
+        public IActionResult Orders()
         {
             var user = _userService.CurrentUser;
-
             return View();
         }
 
@@ -52,10 +50,9 @@ namespace DemoApplication.Areas.Client.Controllers
         #region Download
 
         [HttpGet("download", Name = "client-account-download")]
-        public async Task<IActionResult> Download()
+        public IActionResult Download()
         {
             var user = _userService.CurrentUser;
-
             return View();
         }
 
@@ -64,10 +61,9 @@ namespace DemoApplication.Areas.Client.Controllers
         #region Payment
 
         [HttpGet("payment", Name = "client-account-payment")]
-        public async Task<IActionResult> Payment()
+        public IActionResult Payment()
         {
             var user = _userService.CurrentUser;
-
             return View();
         }
 
@@ -103,7 +99,7 @@ namespace DemoApplication.Areas.Client.Controllers
         #region Add Address
 
         [HttpGet("add-address", Name = "client-account-add-address")]
-        public async Task<IActionResult> AddAddressAsync()
+        public IActionResult AddAddressAsync()
         {
             return View();
         }
@@ -115,6 +111,7 @@ namespace DemoApplication.Areas.Client.Controllers
             {
                 return View(model);
             }
+
             var user = _userService.CurrentUser;
 
             var address = new Address
@@ -142,18 +139,19 @@ namespace DemoApplication.Areas.Client.Controllers
         public async Task<IActionResult> UpdateAddressAsync()
         {
             var user = _userService.CurrentUser;
-            var adreess = await _dataContext.Addresses.FirstOrDefaultAsync(a => a.UserId == user.Id);
-            if (adreess == null)
+            var address = await _dataContext.Addresses.FirstOrDefaultAsync(a => a.UserId == user.Id);
+
+            if (address == null)
             {
                 return NotFound();
             }
 
             var addressViewModel = new UpdateAddressViewModel
             {
-                OrdererFirstName = adreess.OrdererFirstName,
-                OrdererLastName = adreess.OrdererLastName,
-                PhoneNumber = adreess.PhoneNumber,
-                Name = adreess.Name,
+                OrdererFirstName = address.OrdererFirstName,
+                OrdererLastName = address.OrdererLastName,
+                PhoneNumber = address.PhoneNumber,
+                Name = address.Name,
             };
 
             return View(addressViewModel);
@@ -166,16 +164,19 @@ namespace DemoApplication.Areas.Client.Controllers
             {
                 return View(model);
             }
+
             var user = _userService.CurrentUser;
-            var adreess = await _dataContext.Addresses.FirstOrDefaultAsync(a => a.UserId == user.Id);
-            if (adreess is null)
+            var address = await _dataContext.Addresses.FirstOrDefaultAsync(a => a.UserId == user.Id);
+
+            if (address is null)
             {
                 return NotFound();
             }
-            adreess.OrdererFirstName = model.OrdererFirstName;
-            adreess.OrdererLastName = model.OrdererLastName;
-            adreess.PhoneNumber = model.PhoneNumber;
-            adreess.Name = model.Name;
+
+            address.OrdererFirstName = model.OrdererFirstName;
+            address.OrdererLastName = model.OrdererLastName;
+            address.PhoneNumber = model.PhoneNumber;
+            address.Name = model.Name;
 
             await _dataContext.SaveChangesAsync();
 
@@ -187,7 +188,7 @@ namespace DemoApplication.Areas.Client.Controllers
         #region Details
 
         [HttpGet("details", Name = "client-account-details")]
-        public async Task<IActionResult> Details()
+        public async Task<IActionResult> DetailsAsync()
         {
             var user = _userService.CurrentUser;
 
@@ -202,14 +203,20 @@ namespace DemoApplication.Areas.Client.Controllers
 
         [HttpPost("details", Name = "client-account-details")]
 
-        public async Task<IActionResult> Details(UpdateDetailsViewModel model)
+        public async Task<IActionResult> DetailsAsync(UpdateDetailsViewModel model)
         {
 
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
+
             var user = _userService.CurrentUser;
+
+            if (user is null)
+            {
+                return NotFound();
+            }
 
             user.FirstName = model.FirstName;
             user.LastName = model.LastName;
@@ -223,15 +230,15 @@ namespace DemoApplication.Areas.Client.Controllers
 
         #region Password
 
-        [HttpGet("changepassword", Name = "client-account-changepassword")]
-        public async Task<IActionResult> ChangePassword()
+        [HttpGet("changepassword", Name = "client-account-change-password")]
+        public async Task<IActionResult> ChangePasswordAsync()
         {
 
             return View();
         }
 
-        [HttpPost("changepassword", Name = "client-account-changepassword")]
-        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+        [HttpPost("changepassword", Name = "client-account-change-password")]
+        public async Task<IActionResult> ChangePasswordAsync(ChangePasswordViewModel model)
         {
 
             if (!ModelState.IsValid)
@@ -243,7 +250,7 @@ namespace DemoApplication.Areas.Client.Controllers
 
             if (!BC.Verify(model.CurrentPassword, user.Password))
             {
-                ModelState.AddModelError(String.Empty, "Your current password is not correct");
+                ModelState.AddModelError(String.Empty, "Entered passwords do not match!");
                 return View(model);
             }
 
@@ -251,7 +258,7 @@ namespace DemoApplication.Areas.Client.Controllers
 
             await _dataContext.SaveChangesAsync();
 
-            return RedirectToRoute("client-account-changepassword");
+            return RedirectToRoute("client-account-change-password");
         }
 
         #endregion

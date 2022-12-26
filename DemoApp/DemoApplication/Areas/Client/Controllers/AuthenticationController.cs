@@ -31,8 +31,12 @@ namespace DemoApplication.Controllers
         [IsAuthenticated]
         public async Task<IActionResult> LoginAsync()
         {
-            var model = new LoginViewModel();
-            return View(model);
+            if (_userService.IsAuthenticated)
+            {
+                return RedirectToRoute("client-account-dashboard");
+            }
+
+            return View(new LoginViewModel());
         }
 
         [HttpPost("login", Name = "client-auth-login")]
@@ -70,8 +74,7 @@ namespace DemoApplication.Controllers
         [IsAuthenticated]
         public ViewResult Register()
         {
-            var model = new RegisterViewModel();
-            return View();
+            return View(new RegisterViewModel());
         }
 
         [HttpPost("register", Name = "client-auth-register")]
@@ -84,7 +87,7 @@ namespace DemoApplication.Controllers
 
             if (_dbContext.Users.Any(u => u.Email == model.Email))
             {
-                ModelState.AddModelError(String.Empty, "Email already is in use");
+                ModelState.AddModelError(String.Empty, "Email already is in use!");
                 return View(model);
             }
 

@@ -28,6 +28,16 @@ namespace DemoApplication.Services.Concretes
             _basketService = basketService;
         }
 
+        public bool IsAuthenticated
+        {
+            get => _httpContextAccessor.HttpContext!.User.Identity!.IsAuthenticated;
+        }
+
+        public string GetUserFullName()
+        {
+            return $"{CurrentUser.FirstName} {CurrentUser.LastName}";
+        }
+
         public User CurrentUser
         {
             get
@@ -41,7 +51,7 @@ namespace DemoApplication.Services.Concretes
 
                 if (idClaim == null)
                 {
-                    throw new IdentityCookieException("Identity cookie not found");
+                    throw new IdentityCookieException("Identity cookie is not found");
                 }
 
                 return _dataContext.Users.First(u => u.Id == Guid.Parse(idClaim.Value));
@@ -51,17 +61,14 @@ namespace DemoApplication.Services.Concretes
         public async Task<bool> CheckUserAsync(string email, string password)
         {
             var user = await _dataContext.Users.FirstOrDefaultAsync(u => u.Email == email);
-
             return user is not null && user.Password == password || BC.Verify(password, user.Password);
-
         }
 
         public async Task SignInAsync(Guid Id)
         {
             var claims = new List<Claim>
             {
-                new Claim(CustomClaimNames.Id , Id.ToString()) 
-
+                new Claim(CustomClaimNames.Id , Id.ToString())
             };
 
             var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -74,7 +81,10 @@ namespace DemoApplication.Services.Concretes
         {
             var user = await _dataContext.Users.FirstAsync(u => u.Email == email);
 
-            await SignInAsync(user.Id);
+            if (user != null && BC.Verify(password, user.Password))
+            {
+                await SignInAsync(user.Id);
+            }
         }
 
         public async Task SignOutAsync()
@@ -93,6 +103,7 @@ namespace DemoApplication.Services.Concretes
                 CreatedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now
             };
+
             await _dataContext.Users.AddAsync(user);
 
             var basket = new Basket
@@ -105,8 +116,8 @@ namespace DemoApplication.Services.Concretes
             await _dataContext.Baskets.AddAsync(basket);
 
             var cookie = _httpContextAccessor.HttpContext.Request.Cookies["products"];
-            var productsCookieViewModels = new List<ProductCookieViewModel>();
 
+            var productsCookieViewModels = new List<ProductCookieViewModel>();
 
             if (cookie is not null)
             {
@@ -128,18 +139,7 @@ namespace DemoApplication.Services.Concretes
                     await _dataContext.BasketProducts.AddAsync(basketProduct);
                 }
             }
-
             await _dataContext.SaveChangesAsync();
-        }
-
-        public bool IsAuthenticated
-        {
-            get => _httpContextAccessor.HttpContext!.User.Identity!.IsAuthenticated;
-        }
-
-        public string GetUserFullName()
-        {
-            return $"{CurrentUser.FirstName} {CurrentUser.LastName}";
         }
     }
 }

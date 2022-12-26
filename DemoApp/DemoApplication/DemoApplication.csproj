@@ -16,7 +16,6 @@
     <None Remove="Contracts\Constants\**" />
     <None Remove="Contracts\Enums\**" />
     <None Remove="Areas\Client\Views\Account\Address\" />
-    <Content Remove="Areas\Client\Views\Account\Details.cshtml" />
     <None Remove="Areas\Client\Views\Shop\" />
     <None Remove="Areas\Client\ViewModels\Color\" />
     <None Remove="Areas\Client\ViewModels\Account\" />
@@ -28,6 +27,9 @@
     <None Remove="BCrypt.Net" />
     <None Remove="BCrypt.Net-Core" />
     <None Remove="Attributes\" />
+    <None Remove="Ocelot" />
+    <None Remove="Swashbuckle.AspNetCore.Swagger" />
+    <None Remove="MMLib.SwaggerForOcelot" />
   </ItemGroup>
 
   <ItemGroup>
@@ -1119,6 +1121,9 @@
     </PackageReference>
     <PackageReference Include="MimeKit" Version="3.4.3" />
     <PackageReference Include="BCrypt.Net-Core" Version="1.6.0" />
+    <PackageReference Include="Ocelot" Version="18.0.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="6.4.0" />
+    <PackageReference Include="MMLib.SwaggerForOcelot" Version="6.0.0" />
   </ItemGroup>
 
   <ItemGroup>
