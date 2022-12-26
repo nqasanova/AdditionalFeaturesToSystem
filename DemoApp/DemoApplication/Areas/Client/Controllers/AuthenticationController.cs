@@ -31,12 +31,8 @@ namespace DemoApplication.Controllers
         [IsAuthenticated]
         public async Task<IActionResult> LoginAsync()
         {
-            if (_userService.IsAuthenticated)
-            {
-                return RedirectToRoute("client-account-dashboard");
-            }
-
-            return View(new LoginViewModel());
+            var model = new LoginViewModel();
+            return View(model);
         }
 
         [HttpPost("login", Name = "client-auth-login")]
